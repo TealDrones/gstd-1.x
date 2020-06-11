@@ -52,7 +52,7 @@ jobs:
         sudo pip3 install meson
 
     - name: Generate
-      run: meson --prefix /usr --werror build
+      run: meson --libdir /usr/local/lib --werror build
     - name: Compile
       run: ninja -C build
     - name: Checks
