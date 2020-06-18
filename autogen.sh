@@ -28,6 +28,34 @@ autoreconf --verbose --force --install || {
  exit 1;
 }
 
+# Make sure we have common
+if test ! -f common/gst-autogen.sh;
+then
+  echo "+ Setting up common submodule"
+  git submodule init
+fi
+git submodule update
+
+# source helper functions
+if test ! -f common/gst-autogen.sh;
+then
+  echo There is something wrong with your source tree.
+  echo You are missing common/gst-autogen.sh
+  exit 1
+fi
+. common/gst-autogen.sh
+
+# install pre-commit hook for doing clean commits
+if test ! \( -x .git/hooks/pre-commit -a -L .git/hooks/pre-commit \);
+then
+    rm -f .git/hooks/pre-commit
+    if ! ln -s ../../common/hooks/pre-commit.hook .git/hooks/pre-commit 2> /dev/null
+    then
+        echo "Failed to create commit hook symlink, copying instead ..."
+        cp common/hooks/pre-commit.hook .git/hooks/pre-commit
+    fi
+fi
+
 echo
 echo "Now run './configure' with your system settings followed by 'make' to compile this module."
 echo

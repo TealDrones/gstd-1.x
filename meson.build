@@ -217,6 +217,16 @@ gnome = import('gnome')
 # Imports pkgconfig module
 pkgconfig = import('pkgconfig')
 
+# Install git hooks
+git = find_program('git', required : false)
+if git.found()
+  run_command (git, 'submodule', 'init')
+  run_command (git, 'submodule', 'update')
+  run_command('ln', '-s', '../../common/hooks/pre-commit.hook', '.git/hooks/pre-commit')
+else
+  warning('Failed to create commit hook')
+endif
+
 # Meson will generate a header file all the entries in the configuration data object
 configure_file(output : 'config.h', configuration : cdata)
 
